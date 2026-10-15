@@ -37,6 +37,13 @@ A dynamic, high-stakes variation of classic Tic-Tac-Toe where players can only m
   - Amber warning pulses and ticking clocks
   - Triumphant victory arpeggios
 
+### 7. Native-Like Mobile & Touch Experience 📱
+- **Zero Unwanted Scrolling ("Fit-to-Screen")**: Engineered with dynamic viewport height (`100dvh`) and safe-area insets (`env(safe-area-inset-*)`) for iOS notch, Dynamic Island, and home indicator bars.
+- **Zero Tap Delay & No Tap Flashes**: `touch-action: manipulation` and `-webkit-tap-highlight-color: transparent` eliminate 300ms mobile click lag and prevent double-tap zoom accidents.
+- **Tactile Haptic Feedback**: Native vibration bursts (`navigator.vibrate`) on piece placement, FIFO piece dissipation, round victories, and timeout alerts.
+- **Mobile Bottom-Sheet Modals**: Settings, Rules, and Game Over dialogs adapt into thumb-friendly bottom-sheets with smooth touch-scrolling.
+- **Adaptive Landscape Mode**: Seamlessly reflows into a compact layout when playing with a horizontally oriented phone.
+
 ---
 
 ## 🚀 How to Run
