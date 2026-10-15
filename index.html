@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Play Infinity Tic-Tac-Toe: A dynamic, high-stakes game where each player can only hold 3 marks on the board. With expiring piece alerts and per-turn timers.">
+  <title>Infinity Tic-Tac-Toe | Dynamic 3-Piece Vanishing Game</title>
+  
+  <!-- Modern Typography from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>♾️</text></svg>">
+</head>
+<body>
+  <div class="ambient-background">
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+    <div class="glow-orb orb-3"></div>
+  </div>
+
+  <main class="app-container">
+    <!-- Header -->
+    <header class="app-header">
+      <div class="logo-group">
+        <div class="logo-icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 28C8.68629 28 6 25.3137 6 22C6 18.6863 8.68629 16 12 16C16.5 16 19.5 24 24 24C27.3137 24 30 21.3137 30 18C30 14.6863 27.3137 12 24 12C19.5 12 16.5 20 12 20" stroke="url(#logo_grad)" stroke-width="4" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="logo_grad" x1="6" y1="12" x2="30" y2="28" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#0284c7" />
+                <stop offset="1" stop-color="#e11d48" />
+              </linearGradient>
+            </defs>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <h1 class="app-title">TIC-TAC-TOE <span class="badge-infinity">INFINITY</span></h1>
+          <p class="app-subtitle">Max 3 Pieces • FIFO Dissolve • Blitz Clocks</p>
+        </div>
+      </div>
+
+      <!-- Action Controls -->
+      <div class="header-actions">
+        <!-- Theme Toggle Button -->
+        <button id="theme-btn" class="icon-btn" title="Toggle Light / Dark Theme" aria-label="Toggle Theme">
+          <svg id="theme-icon-sun" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/>
+            <line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/>
+            <line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg id="theme-icon-moon" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+
+        <!-- Sound Toggle Button -->
+        <button id="sound-btn" class="icon-btn" title="Toggle Sound FX" aria-label="Toggle Sound">
+          <svg id="sound-icon-on" class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+          </svg>
+          <svg id="sound-icon-off" class="icon hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+            <line x1="23" y1="9" x2="17" y2="15"/>
+            <line x1="17" y1="9" x2="23" y2="15"/>
+          </svg>
+        </button>
+
+        <!-- Rules Info Button -->
+        <button id="rules-btn" class="icon-btn" title="How to Play Rules" aria-label="Game Rules">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="16" x2="12" y2="12"/>
+            <line x1="12" y1="8" x2="12.01" y2="8"/>
+          </svg>
+        </button>
+
+        <!-- Settings Menu Button (Clean Setup Hub) -->
+        <button id="settings-btn" class="icon-btn highlight-btn" title="Game Settings & Round Setup" aria-label="Game Settings">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <!-- Players Status Section -->
+    <section class="players-section">
+      <!-- Player X Card -->
+      <div id="player-card-x" class="player-card player-x active">
+        <div class="card-glow"></div>
+        <div class="player-avatar-wrap">
+          <!-- Circular SVG Countdown Ring -->
+          <svg class="timer-ring-svg" viewBox="0 0 100 100">
+            <circle class="timer-ring-bg" cx="50" cy="50" r="44"/>
+            <circle id="timer-ring-x" class="timer-ring-progress" cx="50" cy="50" r="44"/>
+          </svg>
+          <div class="player-avatar">
+            <span class="symbol-x">✕</span>
+          </div>
+        </div>
+
+        <div class="player-info">
+          <div class="player-name-row">
+            <span class="player-badge">PLAYER 1</span>
+            <span id="timer-val-x" class="timer-val">10.0s</span>
+          </div>
+          <div class="player-score-row">
+            <div class="score-main-group">
+              <span class="score-label">Wins</span>
+              <span id="score-x" class="score-val">0</span>
+            </div>
+            <!-- Series Progress Dots for X -->
+            <div id="match-dots-x" class="match-dots" title="Wins needed for match victory"></div>
+          </div>
+          <!-- 3-Piece Slot Indicators -->
+          <div class="piece-slots" title="Pieces currently active on board">
+            <div id="slot-x-0" class="slot-dot" data-slot="1"></div>
+            <div id="slot-x-1" class="slot-dot" data-slot="2"></div>
+            <div id="slot-x-2" class="slot-dot" data-slot="3"></div>
+            <span class="slot-label">0/3</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Match Info / VS Divider -->
+      <div class="versus-divider">
+        <button id="format-pill-btn" class="format-pill-btn" title="Click to change Match Format in Settings">
+          <span id="match-format-badge">Best of 3</span>
+          <svg class="pill-chevron" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 4.5 6 7.5 9 4.5"/>
+          </svg>
+        </button>
+        <div class="vs-circle">VS</div>
+        <div class="round-counter">Round <span id="round-number">1</span><span id="round-max-wrap" class="round-max-wrap"> of <span id="round-max">3</span></span></div>
+      </div>
+
+      <!-- Player O Card -->
+      <div id="player-card-o" class="player-card player-o">
+        <div class="card-glow"></div>
+        <div class="player-avatar-wrap">
+          <!-- Circular SVG Countdown Ring -->
+          <svg class="timer-ring-svg" viewBox="0 0 100 100">
+            <circle class="timer-ring-bg" cx="50" cy="50" r="44"/>
+            <circle id="timer-ring-o" class="timer-ring-progress" cx="50" cy="50" r="44"/>
+          </svg>
+          <div class="player-avatar">
+            <span class="symbol-o">◯</span>
+          </div>
+        </div>
+
+        <div class="player-info">
+          <div class="player-name-row">
+            <span class="player-badge">PLAYER 2</span>
+            <span id="timer-val-o" class="timer-val">10.0s</span>
+          </div>
+          <div class="player-score-row">
+            <div class="score-main-group">
+              <span class="score-label">Wins</span>
+              <span id="score-o" class="score-val">0</span>
+            </div>
+            <!-- Series Progress Dots for O -->
+            <div id="match-dots-o" class="match-dots" title="Wins needed for match victory"></div>
+          </div>
+          <!-- 3-Piece Slot Indicators -->
+          <div class="piece-slots" title="Pieces currently active on board">
+            <div id="slot-o-0" class="slot-dot" data-slot="1"></div>
+            <div id="slot-o-1" class="slot-dot" data-slot="2"></div>
+            <div id="slot-o-2" class="slot-dot" data-slot="3"></div>
+            <span class="slot-label">0/3</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Turn Banner / Dynamic Status Alert -->
+    <div id="turn-banner" class="turn-banner banner-turn-x">
+      <div class="banner-pulse"></div>
+      <div class="banner-info-wrap">
+        <span id="turn-message" class="turn-message">Player X's Turn • First click starts the timer</span>
+        <span id="vanishing-hint-badge" class="vanishing-hint-badge hidden">
+          <span class="amber-dot"></span> Next move will dissolve piece #1
+        </span>
+      </div>
+      <button id="banner-next-btn" class="banner-action-btn hidden" title="Start next round with an empty board">
+        <span>Next Round</span>
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- The 3x3 Game Board Container -->
+    <section class="board-wrapper">
+      <div class="board-frame">
+        <div id="game-board" class="game-board">
+          <!-- 9 interactive cells (0 to 8) -->
+          <button class="cell" data-index="0" id="cell-0" aria-label="Row 1, Column 1"></button>
+          <button class="cell" data-index="1" id="cell-1" aria-label="Row 1, Column 2"></button>
+          <button class="cell" data-index="2" id="cell-2" aria-label="Row 1, Column 3"></button>
+          <button class="cell" data-index="3" id="cell-3" aria-label="Row 2, Column 1"></button>
+          <button class="cell" data-index="4" id="cell-4" aria-label="Row 2, Column 2"></button>
+          <button class="cell" data-index="5" id="cell-5" aria-label="Row 2, Column 3"></button>
+          <button class="cell" data-index="6" id="cell-6" aria-label="Row 3, Column 1"></button>
+          <button class="cell" data-index="7" id="cell-7" aria-label="Row 3, Column 2"></button>
+          <button class="cell" data-index="8" id="cell-8" aria-label="Row 3, Column 3"></button>
+        </div>
+
+        <!-- SVG Winning Line Overlay -->
+        <svg id="winning-line-svg" class="winning-line-svg" viewBox="0 0 300 300">
+          <line id="winning-line" x1="0" y1="0" x2="0" y2="0" />
+        </svg>
+      </div>
+    </section>
+
+    <!-- Footer Controls -->
+    <footer class="app-footer">
+      <button id="footer-next-btn" class="primary-btn footer-next-btn hidden" title="Start next round with an empty board">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="9 18 15 12 9 6"/>
+        </svg>
+        Next Round
+      </button>
+
+      <button id="reset-round-btn" class="secondary-btn" title="Restart current round from an empty board">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+        Reset Round
+      </button>
+
+      <button id="reset-match-btn" class="ghost-btn" title="Reset all scores and start fresh from Round 1">
+        <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+        </svg>
+        Reset Match
+      </button>
+    </footer>
+  </main>
+
+  <!-- Celebration Confetti Canvas -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- Dynamic Toast Notification -->
+  <div id="toast" class="toast-notification hidden" role="status" aria-live="polite"></div>
+
+  <!-- Round & Match Game Over Modal -->
+  <div id="game-over-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-card game-over-card">
+      <button id="close-modal-btn" class="close-btn modal-corner-close" aria-label="Close Modal">&times;</button>
+      
+      <div id="modal-banner" class="modal-banner banner-x">
+        <div id="modal-category-badge" class="modal-category-badge">ROUND 1 COMPLETE</div>
+        <div id="modal-icon" class="modal-avatar">✕</div>
+      </div>
+
+      <h2 id="modal-title" class="modal-title">Player X Wins Round 1!</h2>
+      <p id="modal-subtitle" class="modal-subtitle">Connected 3 in a row with dynamic mastery.</p>
+
+      <!-- Series Scoreboard Card -->
+      <div class="series-card" id="modal-series-card">
+        <div class="series-header">
+          <span class="series-tag" id="modal-series-tag">BEST OF 3 SERIES</span>
+          <span class="series-progress" id="modal-series-progress">Match Standings</span>
+        </div>
+        <div class="series-teams">
+          <div class="series-player series-x">
+            <span class="series-avatar">✕</span>
+            <span class="series-name">Player X</span>
+            <span class="series-score" id="modal-score-x">1</span>
+          </div>
+          <div class="series-vs-divider">
+            <span class="series-colon">:</span>
+          </div>
+          <div class="series-player series-o">
+            <span class="series-score" id="modal-score-o">0</span>
+            <span class="series-name">Player O</span>
+            <span class="series-avatar">◯</span>
+          </div>
+        </div>
+        <div class="series-target-note" id="modal-target-note">
+          🎯 Player X needs 1 more win to claim the match!
+        </div>
+      </div>
+      
+      <div class="modal-stats">
+        <div class="stat-item">
+          <span class="stat-label">Round Moves</span>
+          <span id="modal-moves" class="stat-val">12</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Round Played</span>
+          <span id="modal-round-stat" class="stat-val">Round 1</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="modal-next-btn" class="primary-btn glow-btn" title="Start next round with an empty board">
+          <span id="modal-next-text">Play Round 2</span>
+          <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </button>
+        <button id="modal-reset-round-btn" class="secondary-btn" title="Restart this round from an empty board">
+          Replay Round
+        </button>
+        <button id="modal-settings-btn" class="ghost-btn" title="Adjust match format or rules">
+          Match Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Settings Menu Modal (Central Setup Hub) -->
+  <div id="settings-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+    <div class="modal-card settings-card">
+      <div class="settings-header">
+        <div class="settings-title-group">
+          <div class="settings-header-icon-wrap">
+            <svg class="icon settings-header-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </div>
+          <div>
+            <h2 id="settings-title" class="settings-modal-title">Game Settings</h2>
+            <p class="settings-modal-subtitle">Configure match series, timers, and rules</p>
+          </div>
+        </div>
+        <button id="close-settings-btn" class="close-btn modal-corner-close" aria-label="Close Settings">&times;</button>
+      </div>
+
+      <div class="settings-body">
+        <!-- 1. Match & Round Format Setup -->
+        <div class="settings-section">
+          <div class="section-header-row">
+            <span class="section-tag">MATCH & ROUND SETUP</span>
+            <span class="section-helper" id="rounds-helper-text">First to 2 wins takes the match</span>
+          </div>
+          <label class="settings-label">Series Format</label>
+          <div class="segmented-control" id="best-of-selector" role="radiogroup" aria-label="Match Format">
+            <button type="button" class="segment-btn" data-bestof="1">Best of 1</button>
+            <button type="button" class="segment-btn active" data-bestof="3">Best of 3</button>
+            <button type="button" class="segment-btn" data-bestof="5">Best of 5</button>
+            <button type="button" class="segment-btn" data-bestof="7">Best of 7</button>
+            <button type="button" class="segment-btn" data-bestof="0">Endless</button>
+          </div>
+        </div>
+
+        <!-- 2. Turn Clock Timer Setup -->
+        <div class="settings-section">
+          <div class="section-header-row">
+            <span class="section-tag">TURN TIMER</span>
+            <span class="section-helper" id="timer-helper-text">Per-turn countdown clock</span>
+          </div>
+          <label class="settings-label">Duration</label>
+          <div class="segmented-control" id="timer-segmented" role="radiogroup" aria-label="Turn Timer">
+            <button type="button" class="segment-btn" data-timer="5">5s Blitz</button>
+            <button type="button" class="segment-btn active" data-timer="10">10s Fast</button>
+            <button type="button" class="segment-btn" data-timer="15">15s Normal</button>
+            <button type="button" class="segment-btn" data-timer="30">30s Relaxed</button>
+            <button type="button" class="segment-btn" data-timer="0">Off (∞)</button>
+          </div>
+        </div>
+
+        <!-- 3. Turn Order / Starting Player Setup -->
+        <div class="settings-section">
+          <div class="section-header-row">
+            <span class="section-tag">TURN ORDER</span>
+            <span class="section-helper">Who starts each round</span>
+          </div>
+          <label class="settings-label">Rotation</label>
+          <div class="segmented-control" id="turn-order-selector" role="radiogroup" aria-label="Turn Order">
+            <button type="button" class="segment-btn active" data-turnorder="alternate">Alternate (X ⇄ O)</button>
+            <button type="button" class="segment-btn" data-turnorder="winner">Winner Starts</button>
+            <button type="button" class="segment-btn" data-turnorder="alwaysX">Always X</button>
+          </div>
+        </div>
+
+        <!-- 4. Preferences: Theme & Sound -->
+        <div class="settings-section">
+          <div class="section-header-row">
+            <span class="section-tag">PREFERENCES</span>
+          </div>
+          
+          <div class="setting-row">
+            <div class="setting-meta">
+              <span class="setting-title">Color Theme</span>
+              <span class="setting-desc">Switch between Crisp Light & Cyber Dark</span>
+            </div>
+            <div class="segmented-control compact-segments" id="theme-segmented">
+              <button type="button" class="segment-btn" data-theme-val="light">☀️ Light</button>
+              <button type="button" class="segment-btn" data-theme-val="dark">🌙 Dark</button>
+            </div>
+          </div>
+
+          <div class="setting-row">
+            <div class="setting-meta">
+              <span class="setting-title">Sound Effects</span>
+              <span class="setting-desc">Procedural Web Audio chimes & warnings</span>
+            </div>
+            <button type="button" id="settings-sound-btn" class="toggle-switch active" role="switch" aria-checked="true" aria-label="Toggle Sound Effects">
+              <span class="switch-ball"></span>
+            </button>
+          </div>
+        </div>
+
+        <!-- 5. Reset Actions -->
+        <div class="settings-section danger-section">
+          <div class="section-header-row">
+            <span class="section-tag">MATCH CONTROLS</span>
+          </div>
+          <div class="settings-actions-grid">
+            <button type="button" id="settings-reset-round-btn" class="secondary-btn settings-action-btn">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+              </svg>
+              Reset Current Round
+            </button>
+            <button type="button" id="settings-reset-match-btn" class="ghost-btn btn-danger settings-action-btn">
+              <svg class="btn-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+              </svg>
+              Reset Match & Scores
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" id="save-settings-btn" class="primary-btn glow-btn">Save & Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- How to Play / Rules Modal -->
+  <div id="rules-modal" class="modal-overlay hidden" role="dialog" aria-modal="true" aria-labelledby="rules-title">
+    <div class="modal-card rules-card">
+      <div class="rules-header">
+        <h2 id="rules-title" class="rules-title">How Infinity Tic-Tac-Toe Works</h2>
+        <button id="close-rules-btn" class="close-btn" aria-label="Close Rules">&times;</button>
+      </div>
+
+      <div class="rules-content">
+        <div class="rule-box">
+          <div class="rule-num">1</div>
+          <div class="rule-desc">
+            <h3>Max 3 Marks Per Player</h3>
+            <p>Each player can only keep at most <strong>3 marks</strong> on the board at any time. When you place your 4th mark, your <strong>first (oldest) mark dissolves</strong> from the board.</p>
+          </div>
+        </div>
+
+        <div class="rule-box">
+          <div class="rule-num">2</div>
+          <div class="rule-desc">
+            <h3>Expiring Piece Amber Alert ⚠️</h3>
+            <p>When you have 3 marks and it's your turn, your oldest mark pulses with an <strong>amber glowing aura</strong> and shows badge <strong>#1</strong>, so you and your opponent know exactly which mark will vanish.</p>
+          </div>
+        </div>
+
+        <div class="rule-box">
+          <div class="rule-num">3</div>
+          <div class="rule-desc">
+            <h3>Blitz Turn Clocks ⏱️</h3>
+            <p>You have a limited time per turn (configured in Settings). If your clock reaches zero, you forfeit the round to your opponent!</p>
+          </div>
+        </div>
+
+        <div class="rule-box">
+          <div class="rule-num">4</div>
+          <div class="rule-desc">
+            <h3>Round & Series System 🏆</h3>
+            <p>Play in competitive formats like <strong>Best of 3</strong> or <strong>Best of 5</strong>. The winner of each round earns a point toward claiming the match trophy!</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button id="got-it-btn" class="primary-btn">Let's Play!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script Bundle -->
+  <script src="js/app.js"></script>
+</body>
+</html>

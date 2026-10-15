@@ -1,0 +1,23 @@
+{
+  "name": "tic-tac-toe-infinity",
+  "version": "1.0.0",
+  "description": "Infinity Tic-Tac-Toe with 3-piece FIFO queue, expiring piece hints, turn timers, and cyber-glass UI.",
+  "main": "js/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "npx -y serve -p 3000 .",
+    "dev": "npx -y serve -p 3000 .",
+    "serve:py": "python3 -m http.server 3000",
+    "test": "/System/Library/Frameworks/JavaScriptCore.framework/Versions/Current/Helpers/jsc -e 'load(\"js/app.js\"); var e = new GameEngine(); e.makeMove(0); e.makeMove(3); e.makeMove(4); e.makeMove(5); e.makeMove(8); if (e.winner !== \"X\") throw new Error(\"Test failed\"); print(\"All unit tests passed successfully!\");'"
+  },
+  "keywords": [
+    "tic-tac-toe",
+    "infinity",
+    "game",
+    "vanish-piece",
+    "chess-clock",
+    "turn-timer"
+  ],
+  "author": "",
+  "license": "MIT"
+}
