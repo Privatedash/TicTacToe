@@ -943,12 +943,26 @@ class App {
     this.currentTheme = theme;
     if (typeof document !== 'undefined') {
       document.documentElement.setAttribute('data-theme', theme);
+      const metaTheme = document.getElementById('meta-theme-color');
+      if (metaTheme) {
+        metaTheme.setAttribute('content', theme === 'dark' ? '#070a12' : '#f1f5f9');
+      }
     }
     if (typeof localStorage !== 'undefined') {
       localStorage.setItem('ttt_infinity_theme', theme);
     }
     this.updateThemeIcons();
     this.updateThemeSegmentedUI();
+  }
+
+  triggerHaptic(pattern = 15) {
+    if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+      try {
+        navigator.vibrate(pattern);
+      } catch (e) {
+        // Safe fallback if vibration is unsupported or restricted
+      }
+    }
   }
 
   toggleTheme() {
@@ -1040,6 +1054,11 @@ class App {
       onCellHover: (idx) => this.renderer.showHoverPreview(idx, this.engine),
       onCellLeave: (idx) => this.renderer.clearHoverPreview(idx, this.engine)
     });
+
+    const gameBoard = document.getElementById('game-board');
+    if (gameBoard) {
+      gameBoard.addEventListener('contextmenu', (e) => e.preventDefault());
+    }
 
     // Theme Toggle Button (Header)
     const themeBtn = document.getElementById('theme-btn');
@@ -1477,7 +1496,10 @@ class App {
   async handleCellClick(cellIndex) {
     if (this.isProcessingMove) return;
     if (this.engine.isGameOver) return;
-    if (!this.engine.isValidMove(cellIndex)) return;
+    if (!this.engine.isValidMove(cellIndex)) {
+      this.triggerHaptic(30);
+      return;
+    }
 
     this.isProcessingMove = true;
     try {
@@ -1489,11 +1511,13 @@ class App {
       // If an existing piece is expiring, animate its dissipation
       if (expiringIndex !== null) {
         this.sound.playVanish();
+        this.triggerHaptic([15, 30, 20]);
         await this.renderer.animateVanishing(expiringIndex);
       }
 
-      // Play placement sound
+      // Play placement sound & tactile tap
       this.sound.playMove(movingPlayer);
+      this.triggerHaptic(15);
 
       // Execute move in engine
       const result = this.engine.makeMove(cellIndex);
@@ -1529,6 +1553,7 @@ class App {
 
     this.sound.playWin();
     this.confetti.launch(winner);
+    this.triggerHaptic([40, 60, 40, 60, 80]);
 
     this.winTimeoutId = setTimeout(() => {
       this.showGameOverModal({
@@ -1541,6 +1566,7 @@ class App {
 
   handleTimeout(timedOutPlayer) {
     this.sound.playTimeout();
+    this.triggerHaptic([50, 40, 50]);
     const result = this.engine.forfeit(timedOutPlayer);
     const winner = result.winner;
     this.roundWinner = winner;
